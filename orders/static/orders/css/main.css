@@ -1,0 +1,19 @@
+.navbar {
+    background-image: url('../img/pizza8.jpg');
+    background-repeat: no-repeat;
+    background-color: #090909;
+    padding-bottom: 100px;
+}
+
+.navbar-nav .nav-item .nav-link {
+    color: white;
+    font-family: 'Fredoka One', cursive;
+}
+
+.carousel-item {
+    height: 400px;
+}
+
+.jumbotron {
+    background: transparent !important;
+}
