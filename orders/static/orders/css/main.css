@@ -17,3 +17,7 @@
 .jumbotron {
     background: transparent !important;
 }
+
+ .modal-footer button {
+    background-color: #a5d192;
+ }
