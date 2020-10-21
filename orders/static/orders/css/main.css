@@ -25,6 +25,12 @@
     background: transparent !important;
 }
 
- .modal-body .btn, .register-body .btn {
+.modal-body .btn, .register-body .btn {
     background-color: #a5d192;
- }
+}
+
+.card img {
+    width: 100%;
+    height: 30vw;
+    object-fit: cover;
+}

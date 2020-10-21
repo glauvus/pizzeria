@@ -1,0 +1,18 @@
+{% extends "orders/base.html" %}
+
+{% block content %}
+<div class="register-body row d-flex justify-content-center">
+    <form class="col-md-4 col-sm-6 col-8" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-2">
+            {{ field.label_tag }}
+            {{ field }}
+        </div>
+        {% endfor %}
+        <div class="mb-2 d-flex justify-content-center">
+            <input class="btn btn-default px-5" type="submit" value="Register"/>
+        </div>
+    </form>
+</div>
+{% endblock %}

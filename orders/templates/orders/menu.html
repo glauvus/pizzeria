@@ -1,0 +1,28 @@
+{% extends "orders/baseWmenu.html" %}
+
+{% load static %}
+
+{% block content %}
+<!-- Carousel -->
+<div id="carouselExampleIndicators" class="row carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="{% static '/orders/img/' %}{{menu_cat}}.jpg" class="d-block w-100" alt="...">
+        </div>
+    </div>
+</div>
+<div class="row">
+    {% for item in items %}
+    <div class="col-md-3 col-sm-4 col-6">
+        <div class="card mt-3">
+            <img class="card-img-top" src="{% static '/orders/img/' %}{{item.name}}.jpg" alt="Card image cap">
+            <div class="card-body">
+            <h5 class="card-title">{{item.name}}</h5>
+            <h3 class="card-text">{{item.price}} &euro;</h3>
+            <a href="#" class="btn btn-primary">Add to cart</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

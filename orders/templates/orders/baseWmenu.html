@@ -1,0 +1,52 @@
+{% extends "orders/base.html" %}
+
+{% load static %}
+
+{% block menu %}
+<!-- Menu list -->
+<div class="row list-group list-group-horizontal">
+    <a href="#" class="col list-group-item list-group-item-action border-dark rounded-0"><img src="{% static '/orders/img/pizza.png' %}"><span class="h4">Pizzas</span></a>
+    <a href="/menu/pasta" class="col list-group-item list-group-item-action border-dark rounded-0"><img src="{% static '/orders/img/pasta.png' %}"><span class="h4">Pasta</span></a>
+    <a href="/menu/salads" class="col list-group-item list-group-item-action border-dark rounded-0"><img src="{% static '/orders/img/salad.png' %}"><span class="h4">Salads</span></a>
+    <a href="/menu/desserts" class="col list-group-item list-group-item-action border-dark rounded-0"><img src="{% static '/orders/img/dessert.png' %}"><span class="h4">Desserts</span></a>
+    <a href="/menu/drinks" class="col list-group-item list-group-item-action border-dark rounded-0"><img src="{% static '/orders/img/drink.png' %}"><span class="h4">Drinks</span></a>
+</div>
+{% endblock %}
+
+{% block modal %}
+<!-- Modal -->
+<div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- Modal header -->
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold">Sign in</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <form class="modal-body mx-3" action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <div class="mb-5">
+                    <i class="fa fa-user"></i>
+                    <label data-error="wrong" data-success="right" for="defaultForm-username">Username</label>
+                    <input type="text" id="defaultForm-username" name="username" class="form-control">
+                </div>
+                <div class="mb-5">
+                    <i class="fa fa-lock"></i>
+                    <label data-error="wrong" data-success="right" for="defaultForm-pass">Password</label>
+                    <input type="password" id="defaultForm-pass" name="password" class="form-control">
+                </div>
+                <div class="mb-2 d-flex justify-content-center">
+                    <input class="btn btn-default px-5" type="submit" value="Login"/>
+                </div>
+            </form>
+            <!-- Modal footer -->
+            <div class="modal-footer d-flex justify-content-center">
+                <div class="mb-2">Don't have an account yet?<a href="{% url 'register' %}"> Register</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
