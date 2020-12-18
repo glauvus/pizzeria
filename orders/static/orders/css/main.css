@@ -25,7 +25,7 @@
     background: transparent !important;
 }
 
-.modal-body .btn, .register-body .btn {
+.modal-body .btn, .register-body .btn, .cart-body .btn {
     background-color: #a5d192;
 }
 

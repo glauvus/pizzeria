@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterForm
 from django.http import HttpResponseRedirect
+from django.http.response import JsonResponse
 from django.urls import reverse
-from .models import Pasta, Salad, Dessert, Drink
+from .models import Pasta, Salad, Dessert, Drink, Order_pasta, Cart
 
 
 # Create your views here.
@@ -48,3 +49,17 @@ def menu_view(request, menu_cat):
     else:
         return HttpResponseRedirect(reverse("index"))
     return render(request, "orders/menu.html", {"items": items, "menu_cat": menu_cat})
+
+
+def cart_view(request):
+    if request.user.is_authenticated:
+        return render(request, "orders/cart.html", {"user": request.user})
+    return render(request, "orders/register.html", {"form": RegisterForm()})
+
+
+def addToCart_view(request, item_id):
+    cart = Cart.objects.get(pk=1)
+    pasta = Pasta.objects.get(pk=item_id)
+    item = Order_pasta(cart_id=cart, pasta_id=pasta, quantity=1)
+    item.save()
+    return JsonResponse({'id': pasta.id, 'name': pasta.name}, status=201)
