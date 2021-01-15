@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # Create your models here.
 class Size(models.Model):
     price_pct = models.DecimalField(max_digits=3, decimal_places=2)
@@ -40,6 +41,7 @@ class Drink(models.Model):
 
 class Cart(models.Model):
     customer_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    isCheckedOut = models.BooleanField(default=False)
 
 
 class Order_pasta(models.Model):

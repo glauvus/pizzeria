@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Register = () => {
+const Register = props => {
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -33,14 +33,19 @@ const Register = () => {
         e.preventDefault();
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken },
             body: JSON.stringify({
                 username: state.username,
                 password: state.password,
             }),
         };
-        fetch('/api/create-user', requestOptions)
-        .then(response => response.json())
+        fetch('/api/users/create', requestOptions)
+        .then(response => {
+            response.json();
+            if(response.status===201)
+                props.history.push('/');
+        })
         .then(data => console.log(data));
     }
 

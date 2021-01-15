@@ -34,7 +34,8 @@ const Modal = () => {
         e.preventDefault();
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken },
             body: JSON.stringify({
                 username: state.username,
                 password: state.password,

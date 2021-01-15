@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Pasta, Salad, Dessert, Drink
+from .models import Pasta, Salad, Dessert, Drink, Cart, Order_pasta
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -37,3 +37,15 @@ class DrinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Drink
         fields = ('id', 'name', 'price')
+
+
+class CartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
+        fields = ('id', 'customer_id', 'isCheckedOut')
+
+
+class OrderPastaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order_pasta
+        fields = ('pasta_id', 'quantity')
