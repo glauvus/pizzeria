@@ -1,18 +1,51 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './AddToCartModal.css';
 
-const AddToCartModal = ({ item }) => {
-    const [count, setCount] = useState(0);
+// includes csrf token to requests
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+
+const AddToCartModal = ({ item, category }) => {
+    const [count, setCount] = useState(1);
 
     const handleIncrement = () => {
         setCount(prevCount => prevCount + 1);
       };
     const handleDecrement = () => {
-        setCount(prevCount => prevCount > 0 ? prevCount - 1 : 0);
+        setCount(prevCount => prevCount > 1 ? prevCount - 1 : 1);
       };
+    
+    let param = '';
+    switch(category) {
+        case 'pasta':
+            param = 'pasta_id';
+            break;
+        case 'salads':
+            param = 'salad_id';
+            break;
+        case 'desserts':
+            param = 'dessert_id';
+            break;
+        case 'drinks':
+            param = 'drink_id';
+            break;
+        default:
+            param = '';
+    }
 
     const addToCart = (e) => {
-        e.preventDefault();
+        axios.post(`/api/orders/create/${category}`, {
+            [param]: item,
+            quantity: count
+        })
+        .then((response) => {
+            console.log(category);
+        }, (error) => {
+            console.log(error);
+        });
+
+        /*e.preventDefault();
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
@@ -23,7 +56,7 @@ const AddToCartModal = ({ item }) => {
         }
         fetch('/api/orders/create/pasta', requestOptions)
         .then(response => response.json())
-        .then(data => console.log(data));
+        .then(data => console.log(data));*/
     }
 
     return (

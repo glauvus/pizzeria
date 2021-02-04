@@ -8,6 +8,7 @@ import Banner from './Banner';
 import MenuCard from './MenuCard';
 import Register from './Register';
 import Footer from './Footer';
+import Cart from './Cart';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Banner />
           </Route>
           <Route path="/menu/:category" component={MenuCard} />
+          <Route path="/cart" component={Cart} />
           <Route path="/register" component={Register} />
         </Switch>
         <Footer />

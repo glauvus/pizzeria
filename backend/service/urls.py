@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CreateUserView, LoginUserView, LogoutUserView, IsAuthenticatedView, PastaView, SaladView, DessertView, DrinkView, CreateCartView, CreateOrderPastaView, CreateOrderSaladView, CreateOrderDessertView, CreateOrderDrinkView
+from .views import CartView, CreateUserView, LoginUserView, LogoutUserView, IsAuthenticatedView, PastaView, SaladView, DessertView, DrinkView, CreateCartView, CreateOrderPastaView, CreateOrderSaladView, CreateOrderDessertView, CreateOrderDrinkView
 
 urlpatterns = [
     path('users/create', CreateUserView.as_view()),
@@ -15,4 +15,5 @@ urlpatterns = [
     path('orders/create/salads', CreateOrderSaladView.as_view()),
     path('orders/create/desserts', CreateOrderDessertView.as_view()),
     path('orders/create/drinks', CreateOrderDrinkView.as_view()),
+    path('cart', CartView.as_view()),
 ]

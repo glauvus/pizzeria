@@ -45,25 +45,57 @@ class CartSerializer(serializers.ModelSerializer):
         fields = ('id', 'customer_id', 'isCheckedOut')
 
 
-class OrderPastaSerializer(serializers.ModelSerializer):
+class CreateOrderPastaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order_pasta
         fields = ('pasta_id', 'quantity')
 
 
-class OrderSaladSerializer(serializers.ModelSerializer):
+class CreateOrderSaladSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order_salad
         fields = ('salad_id', 'quantity')
 
 
-class OrderDessertSerializer(serializers.ModelSerializer):
+class CreateOrderDessertSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order_dessert
         fields = ('dessert_id', 'quantity')
 
 
-class OrderDrinkSerializer(serializers.ModelSerializer):
+class CreateOrderDrinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order_drink
         fields = ('drink_id', 'quantity')
+
+
+class OrderPastaSerializer(serializers.ModelSerializer):
+    pasta_id = PastaSerializer(read_only=True)
+
+    class Meta:
+        model = Order_pasta
+        fields = '__all__'
+
+
+class OrderSaladSerializer(serializers.ModelSerializer):
+    salad_id = SaladSerializer(read_only=True)
+
+    class Meta:
+        model = Order_salad
+        fields = '__all__'
+
+
+class OrderDessertSerializer(serializers.ModelSerializer):
+    dessert_id = DessertSerializer(read_only=True)
+
+    class Meta:
+        model = Order_dessert
+        fields = '__all__'
+
+
+class OrderDrinkSerializer(serializers.ModelSerializer):
+    drink_id = DrinkSerializer(read_only=True)
+
+    class Meta:
+        model = Order_drink
+        fields = '__all__'

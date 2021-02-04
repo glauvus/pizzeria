@@ -1,5 +1,5 @@
 from rest_framework import generics, status
-from .serializers import UserSerializer, CreateUserSerializer, PastaSerializer, SaladSerializer, DessertSerializer, DrinkSerializer, CartSerializer, OrderPastaSerializer, OrderSaladSerializer, OrderDessertSerializer, OrderDrinkSerializer
+from .serializers import UserSerializer, CreateUserSerializer, PastaSerializer, SaladSerializer, DessertSerializer, DrinkSerializer, CartSerializer, CreateOrderPastaSerializer, CreateOrderSaladSerializer, CreateOrderDessertSerializer, CreateOrderDrinkSerializer, OrderPastaSerializer, OrderSaladSerializer, OrderDessertSerializer, OrderDrinkSerializer
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
@@ -7,6 +7,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models.models import Pasta, Salad, Dessert, Drink, Cart, Order_pasta, Order_salad, Order_dessert, Order_drink
+from django.http import JsonResponse
 
 
 """ CreateUserView
@@ -29,7 +30,7 @@ class CreateUserView(APIView):
 
 
 """ LoginUserView
-Logs the user in utilizing session authentication.
+Logs the user in, utilizing session authentication.
 Creates a new cart if no pending cart found for that user.
 """
 class LoginUserView(APIView):
@@ -62,7 +63,7 @@ class LogoutUserView(APIView):
 class IsAuthenticatedView(APIView):
     def get(self, request, format=None):
         is_authenticated = request.user.is_authenticated
-        return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
+        return Response({'is_authenticated': is_authenticated}, status=status.HTTP_200_OK)
 
 
 class PastaView(generics.ListAPIView):
@@ -98,7 +99,7 @@ class CreateCartView(APIView):
 
 class CreateOrderPastaView(CreateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = OrderPastaSerializer
+    serializer_class = CreateOrderPastaSerializer
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -110,12 +111,12 @@ class CreateOrderPastaView(CreateAPIView):
             pasta = Pasta.objects.get(pk=pasta_id)
             order_pasta = Order_pasta(cart_id=cart, pasta_id=pasta, quantity=quantity)
             order_pasta.save()
-        return Response(OrderPastaSerializer(order_pasta).data, status=status.HTTP_201_CREATED)
+        return Response(CreateOrderPastaSerializer(order_pasta).data, status=status.HTTP_201_CREATED)
 
 
 class CreateOrderSaladView(CreateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = OrderSaladSerializer
+    serializer_class = CreateOrderSaladSerializer
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -127,12 +128,12 @@ class CreateOrderSaladView(CreateAPIView):
             salad = Salad.objects.get(pk=salad_id)
             order_salad = Order_salad(cart_id=cart, salad_id=salad, quantity=quantity)
             order_salad.save()
-        return Response(OrderSaladSerializer(order_salad).data, status=status.HTTP_201_CREATED)
+        return Response(CreateOrderSaladSerializer(order_salad).data, status=status.HTTP_201_CREATED)
 
 
 class CreateOrderDessertView(CreateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = OrderDessertSerializer
+    serializer_class = CreateOrderDessertSerializer
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -144,12 +145,12 @@ class CreateOrderDessertView(CreateAPIView):
             dessert = Dessert.objects.get(pk=dessert_id)
             order_dessert = Order_dessert(cart_id=cart, dessert_id=dessert, quantity=quantity)
             order_dessert.save()
-        return Response(OrderDessertSerializer(order_dessert).data, status=status.HTTP_201_CREATED)
+        return Response(CreateOrderDessertSerializer(order_dessert).data, status=status.HTTP_201_CREATED)
 
 
 class CreateOrderDrinkView(CreateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = OrderDrinkSerializer
+    serializer_class = CreateOrderDrinkSerializer
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -161,4 +162,26 @@ class CreateOrderDrinkView(CreateAPIView):
             drink = Drink.objects.get(pk=drink_id)
             order_drink = Order_drink(cart_id=cart, drink_id=drink, quantity=quantity)
             order_drink.save()
-        return Response(OrderDrinkSerializer(order_drink).data, status=status.HTTP_201_CREATED)
+        return Response(CreateOrderDrinkSerializer(order_drink).data, status=status.HTTP_201_CREATED)
+
+
+class CartView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        uid = request.user.id
+        cart = Cart.objects.get(customer_id=uid, isCheckedOut=False)
+
+        querysetPasta = Order_pasta.objects.filter(cart_id=cart)
+        querysetPastaSerialized = OrderPastaSerializer(querysetPasta, many=True).data
+
+        querysetSalads = Order_salad.objects.filter(cart_id=cart)
+        querysetSaladsSerialized = OrderSaladSerializer(querysetSalads, many=True).data
+
+        querysetDesserts = Order_dessert.objects.filter(cart_id=cart)
+        querysetDessertsSerialized = OrderDessertSerializer(querysetDesserts, many=True).data
+
+        querysetDrinks = Order_drink.objects.filter(cart_id=cart)
+        querysetDrinksSerialized = OrderDrinkSerializer(querysetDrinks, many=True).data
+
+        return JsonResponse({'pasta': querysetPastaSerialized, 'salads': querysetSaladsSerialized, 'desserts': querysetDessertsSerialized, 'drinks': querysetDrinksSerialized})

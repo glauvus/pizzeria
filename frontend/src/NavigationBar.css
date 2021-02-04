@@ -10,3 +10,8 @@
     font-family: 'Fredoka One', cursive;
   }
   
+  .nav-item input {
+    background-color: transparent;
+    border-style: none;
+    outline: none;
+  }

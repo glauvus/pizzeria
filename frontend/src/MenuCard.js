@@ -46,7 +46,7 @@ const MenuCard = ({match}) => {
         </div>
         ))
         }
-        <AddToCartModal item={selectedItemID} />
+        <AddToCartModal item={selectedItemID} category={category} />
     </div>
   );
 }
