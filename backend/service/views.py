@@ -1,13 +1,14 @@
 from rest_framework import generics, status
-from .serializers import UserSerializer, CreateUserSerializer, PastaSerializer, SaladSerializer, DessertSerializer, DrinkSerializer, CartSerializer, CreateOrderPastaSerializer, CreateOrderSaladSerializer, CreateOrderDessertSerializer, CreateOrderDrinkSerializer, OrderPastaSerializer, OrderSaladSerializer, OrderDessertSerializer, OrderDrinkSerializer
+from .serializers import UserSerializer, CreateUserSerializer, ToppingSerializer, PizzaSerializer, PastaSerializer, SaladSerializer, DessertSerializer, DrinkSerializer, CartSerializer, CreateOrderPizzaSerializer, CreateOrderPastaSerializer, CreateOrderSaladSerializer, CreateOrderDessertSerializer, CreateOrderDrinkSerializer, OrderPizzaSerializer, OrderPastaSerializer, OrderSaladSerializer, OrderDessertSerializer, OrderDrinkSerializer, CreatePizzaSerializer
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models.models import Pasta, Salad, Dessert, Drink, Cart, Order_pasta, Order_salad, Order_dessert, Order_drink
+from .models.models import Pizza, Topping, Size, Pasta, Salad, Dessert, Drink, Cart, Order_pizza, Order_pasta, Order_salad, Order_dessert, Order_drink
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 
 """ CreateUserView
@@ -66,6 +67,16 @@ class IsAuthenticatedView(APIView):
         return Response({'is_authenticated': is_authenticated}, status=status.HTTP_200_OK)
 
 
+class ToppingView(generics.ListAPIView):
+    queryset = Topping.objects.all()
+    serializer_class = ToppingSerializer
+
+
+class PizzaView(generics.ListAPIView):
+    queryset = Pizza.objects.all().exclude(name='custom pizza')
+    serializer_class = PizzaSerializer
+
+
 class PastaView(generics.ListAPIView):
     queryset = Pasta.objects.all()
     serializer_class = PastaSerializer
@@ -95,6 +106,25 @@ class CreateCartView(APIView):
         cart.customer_id = user
         cart.save()
         return Response(CartSerializer(cart).data, status=status.HTTP_200_OK)
+
+
+class CreateOrderPizzaView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CreateOrderPizzaSerializer
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            pizza_id = serializer.data.get('pizza_id')
+            size_id = serializer.data.get('size_id')
+            quantity = serializer.data.get('quantity')
+            uid = request.user.id
+            cart = Cart.objects.get(customer_id=uid, isCheckedOut=False)
+            pizza = Pizza.objects.get(pk=pizza_id)
+            size = Size.objects.get(pk=size_id)
+            order_pizza = Order_pizza(cart_id=cart, pizza_id=pizza, size_id=size, quantity=quantity)
+            order_pizza.save()
+        return Response(CreateOrderPizzaSerializer(order_pizza).data, status=status.HTTP_201_CREATED)
 
 
 class CreateOrderPastaView(CreateAPIView):
@@ -165,12 +195,18 @@ class CreateOrderDrinkView(CreateAPIView):
         return Response(CreateOrderDrinkSerializer(order_drink).data, status=status.HTTP_201_CREATED)
 
 
+""" CartView
+Returns a custom JSON object after querying requested user's orders for each category separately.
+"""
 class CartView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         uid = request.user.id
-        cart = Cart.objects.get(customer_id=uid, isCheckedOut=False)
+        cart = get_object_or_404(Cart, customer_id=uid, isCheckedOut=False)
+
+        querysetPizza = Order_pizza.objects.filter(cart_id=cart)
+        querysetPizzaSerialized = OrderPizzaSerializer(querysetPizza, many=True).data
 
         querysetPasta = Order_pasta.objects.filter(cart_id=cart)
         querysetPastaSerialized = OrderPastaSerializer(querysetPasta, many=True).data
@@ -184,4 +220,34 @@ class CartView(generics.ListAPIView):
         querysetDrinks = Order_drink.objects.filter(cart_id=cart)
         querysetDrinksSerialized = OrderDrinkSerializer(querysetDrinks, many=True).data
 
-        return JsonResponse({'pasta': querysetPastaSerialized, 'salads': querysetSaladsSerialized, 'desserts': querysetDessertsSerialized, 'drinks': querysetDrinksSerialized})
+        return JsonResponse({'pizzas': querysetPizzaSerialized, 'pasta': querysetPastaSerialized, 'salads': querysetSaladsSerialized, 'desserts': querysetDessertsSerialized, 'drinks': querysetDrinksSerialized})
+
+
+""" CreatePizzaView
+Creates a pizza object given the toppings and the calculated price passed.
+"""
+class CreatePizzaView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CreatePizzaSerializer
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            price = serializer.data.get('price')
+            toppings = serializer.data.get('toppings')
+            pizza = Pizza(name='custom pizza', price=price)
+            pizza.save()
+            pizza.toppings.set(toppings)
+        return Response(PizzaSerializer(pizza).data, status=status.HTTP_201_CREATED)
+
+
+""" CheckoutView
+Checkouts the requested user's cart by setting isCheckedOut to False.
+"""
+class CheckoutView(APIView):
+    def put(self, request, format=None):
+        uid = request.user.id
+        cart = Cart.objects.get(customer_id=uid, isCheckedOut=False)
+        cart.isCheckedOut = True
+        cart.save()
+        return Response(CartSerializer(cart).data, status=status.HTTP_200_OK)

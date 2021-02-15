@@ -1,3 +1,13 @@
 .register-body .btn {
     background-color: #a5d192;
 }
+
+#emptyFormMessage {
+    display: none;
+    color: red;
+}
+
+#userExistsMessage {
+    display: none;
+    color: red;
+}

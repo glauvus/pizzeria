@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './MenuCard.css';
 import AddToCartModal from './AddToCartModal';
+import { Link } from 'react-router-dom';
 
 const MenuCard = ({match}) => {
     const [items, setItems] = useState([]);
@@ -19,18 +20,23 @@ const MenuCard = ({match}) => {
         setSelectedItemID(itemID);
     }
 
-    /*const fetchItems = async () => {
-        const data = await fetch(
-            `/api/${match.params.category}`
-        );
-
-        const items = await data.json();
-        console.log(items);
-        setItems(items);
-    };*/
-
   return (
     <div className="row">
+        {
+        category === 'pizzas' &&
+        <div className="col-md-3 col-sm-4 col-6">
+            <div className="card mt-3">
+                <img className="card-img-top" src={require(`./img/custom.jpg`)} alt="item card"/>
+                    <div className="card-body">
+                        <div>
+                            <h5 className="card-title">Customized</h5>
+                            <h3 className="card-text">pizza</h3>
+                            <Link className="btn btn-primary mr-2" to='/menu/pizzas/custom'>Make yours</Link>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        }
       {items.map(item => (
         <div key={item.id} className="col-md-3 col-sm-4 col-6">
             <div className="card mt-3">

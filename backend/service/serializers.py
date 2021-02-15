@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models.models import Pasta, Salad, Dessert, Drink, Cart, Order_pasta, Order_salad, Order_dessert, Order_drink
+from .models.models import Size, Topping, Pizza, Pasta, Salad, Dessert, Drink, Cart, Order_pizza, Order_pasta, Order_salad, Order_dessert, Order_drink
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,6 +13,24 @@ class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'password')
+
+
+class SizeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Size
+        fields = ('price_pct',)
+
+
+class ToppingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Topping
+        fields = ('id', 'name', 'price')
+
+
+class PizzaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pizza
+        fields = ('id', 'name', 'price', 'toppings')
 
 
 class PastaSerializer(serializers.ModelSerializer):
@@ -45,6 +63,12 @@ class CartSerializer(serializers.ModelSerializer):
         fields = ('id', 'customer_id', 'isCheckedOut')
 
 
+class CreateOrderPizzaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order_pizza
+        fields = ('pizza_id', 'size_id', 'quantity')
+
+
 class CreateOrderPastaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order_pasta
@@ -67,6 +91,15 @@ class CreateOrderDrinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order_drink
         fields = ('drink_id', 'quantity')
+
+
+class OrderPizzaSerializer(serializers.ModelSerializer):
+    pizza_id = PizzaSerializer(read_only=True)
+    size_id = SizeSerializer(read_only=True)
+
+    class Meta:
+        model = Order_pizza
+        fields = '__all__'
 
 
 class OrderPastaSerializer(serializers.ModelSerializer):
@@ -99,3 +132,9 @@ class OrderDrinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order_drink
         fields = '__all__'
+
+
+class CreatePizzaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pizza
+        fields = ('price', 'toppings')

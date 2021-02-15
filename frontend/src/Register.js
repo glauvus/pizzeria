@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './Register.css';
 
 const Register = props => {
@@ -16,21 +17,25 @@ const Register = props => {
 
     const handleRegister = (e) => {
         e.preventDefault();
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                username: state.username,
-                password: state.password,
-            }),
-        };
-        fetch('/api/users/create', requestOptions)
+        if(Object.values(state).includes('')) {
+            document.getElementById('emptyFormMessage').style.display = 'flex';
+            setTimeout(() => {document.getElementById('emptyFormMessage').style.display = 'none'}, 3000);
+            return
+        }
+
+        axios.post(`/api/users/create`, {
+            username: state.username,
+            password: state.password
+        })
         .then(response => {
-            response.json();
             if(response.status===201)
                 props.history.push('/');
-        })
-        .then(data => console.log(data));
+        }, (error) => {
+            document.getElementById('userExistsMessage').style.display = 'flex';
+            setTimeout(() => {document.getElementById('userExistsMessage').style.display = 'none'}, 3000);
+            console.log(error);
+        });
+
     }
 
     return (
@@ -47,9 +52,11 @@ const Register = props => {
                         <label data-error="wrong" data-success="right" htmlFor="registerForm-pass">Password</label>
                         <input type="password" id="registerForm-pass" name="password" className="form-control" onChange={handleChange}/>
                     </div>
-                        <div className="mb-2 d-flex justify-content-center">
+                    <div className="mb-2 d-flex justify-content-center">
                         <input className="btn btn-default px-5" type="submit" value="Register" onClick={handleRegister}/>
                     </div>
+                    <div className="justify-content-center" id="emptyFormMessage">Please fill out all fields!</div>
+                    <div className="justify-content-center" id="userExistsMessage">This username already exists!</div>
                 </form>
             </div>
         </div>

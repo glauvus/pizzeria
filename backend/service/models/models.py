@@ -14,7 +14,6 @@ class Topping(models.Model):
 
 class Pizza(models.Model):
     name = models.CharField(max_length=30)
-    size = models.ForeignKey(Size, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=4, decimal_places=2)
     toppings = models.ManyToManyField(Topping, blank=True, related_name="pizzas")
 
@@ -42,6 +41,13 @@ class Drink(models.Model):
 class Cart(models.Model):
     customer_id = models.ForeignKey(User, on_delete=models.CASCADE)
     isCheckedOut = models.BooleanField(default=False)
+
+
+class Order_pizza(models.Model):
+    cart_id = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    pizza_id = models.ForeignKey(Pizza, on_delete=models.CASCADE)
+    size_id = models.ForeignKey(Size, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
 
 
 class Order_pasta(models.Model):

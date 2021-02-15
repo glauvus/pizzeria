@@ -9,6 +9,7 @@ import MenuCard from './MenuCard';
 import Register from './Register';
 import Footer from './Footer';
 import Cart from './Cart';
+import CustomPizzaCard from './CustomPizzaCard';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Carousel />
             <Banner />
           </Route>
+          <Route path="/menu/pizzas/custom" component={CustomPizzaCard} />
           <Route path="/menu/:category" component={MenuCard} />
           <Route path="/cart" component={Cart} />
           <Route path="/register" component={Register} />

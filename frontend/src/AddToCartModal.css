@@ -1,3 +1,17 @@
 .cart-body .btn {
     background-color: #a5d192;
 }
+
+.form-check {
+    display: inline;
+}
+
+#successMessage {
+    text-align: center;
+    display: none;
+}
+
+#failMessage {
+    text-align: center;
+    display: none;
+}

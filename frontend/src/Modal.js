@@ -19,6 +19,10 @@ const Modal = () => {
 
     const dispatch = useDispatch();
 
+    /* handleLogin
+    Requests login and, if successful, reloads main page.
+    If it fails, displays error message to the user.
+    */
     const handleLogin = (e) => {
         e.preventDefault();
         axios.post('/api/login', {
@@ -27,24 +31,13 @@ const Modal = () => {
         })
         .then(response => {
             dispatch(login());
+            window.location.reload();
         }, (error) => {
+            document.getElementById('errorMessage').style.display = 'flex';
+            setTimeout(() => {document.getElementById('errorMessage').style.display = 'none'}, 2500);
             console.log(error);
         });
-        /*const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                username: state.username,
-                password: state.password,
-            }),
-        };
-        fetch('/api/users/create', requestOptions)
-        .then(response => {
-            response.json();
-            if(response.status===201)
-                props.history.push('/');
-        })
-        .then(data => console.log(data));*/
+
     }
 
     return (
@@ -76,6 +69,9 @@ const Modal = () => {
                         <div className="mb-2">Don't have an account yet?<a href="/register"> Register</a></div>
                     </div>
                 </div>
+            </div>
+            <div className="modal-dialog alert alert-danger alert-dismissible fade show" id="errorMessage" role="alert">
+                Wrong username or password.
             </div>
         </div>
     );

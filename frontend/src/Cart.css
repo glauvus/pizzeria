@@ -1,0 +1,11 @@
+#cartTable {
+    visibility: hidden;
+}
+
+#cartFailMessage {
+    display: none;
+}
+
+#checkoutSuccessMessage {
+    display: none;
+}

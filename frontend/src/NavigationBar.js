@@ -3,18 +3,29 @@ import './NavigationBar.css';
 import Modal from './Modal';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { isLoggedIn } from './features/userSlice';
+import { isLoggedIn, cartCounter } from './features/userSlice';
 import { useDispatch } from 'react-redux';
-import { login, logout } from './features/userSlice';
+import { login, logout, setCartCounter } from './features/userSlice';
 import axios from 'axios';
 
 const NavigationBar = () => {
 
     const isUserLoggedIn = useSelector(isLoggedIn);
+    const getCartCounter = useSelector(cartCounter);
 
     const dispatch = useDispatch();
     const setUserStatus = (isAuthenticated) => {
-        if(isAuthenticated) dispatch(login());
+        if(isAuthenticated) {
+            dispatch(login());
+            axios.get('/api/cart')
+            .then(response => {
+                let counter = 0;
+                for(const key in response.data)
+                    counter += response.data[key].length;
+                dispatch(setCartCounter(counter));
+                })
+            .catch(err => console.log(err));
+        }
     }
 
     useEffect(() => {
@@ -22,7 +33,7 @@ const NavigationBar = () => {
         .then(response => {
             console.log(response.data);
             setUserStatus(response.data.is_authenticated);
-        })
+            })
         .catch(err => console.log(err));
     }, []);
 
@@ -49,7 +60,9 @@ const NavigationBar = () => {
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to={'/cart'}>
-                                <i className="fa fa-shopping-cart fa-fw" aria-hidden="true"></i>&nbsp; CART
+                                &nbsp; CART
+                                <i className="fa fa-shopping-cart fa-fw" aria-hidden="true"></i>
+                                <span className='badge badge-danger'> {getCartCounter} </span>
                             </Link>
                         </li>
                     </ul>
