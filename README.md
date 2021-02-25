@@ -11,7 +11,7 @@ https://pizz3ria.herokuapp.com
 
 ![alt text](https://i.imgur.com/zMyZTb1.gif)
 
-# API (*Not completed yet*)
+# API Documentation (*Not completed yet*)
 =================
    * [Products](#products)
       * [Pizzas](#pizzas)
